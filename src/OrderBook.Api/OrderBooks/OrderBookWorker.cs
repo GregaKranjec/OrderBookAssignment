@@ -1,15 +1,18 @@
 using System.Diagnostics;
 using System.Text.Json;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Data.Sqlite;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using OrderBook.Api.Contracts;
 using OrderBook.Api.Exchanges.Bitstamp;
 using OrderBook.Api.Hubs;
+using OrderBook.Api.Persistence;
 
 namespace OrderBook.Api.OrderBooks;
 
 /// <summary>
-/// Acquires snapshots serially, updates the shared store, and broadcasts complete snapshots.
+/// Acquires and audits snapshots serially, then updates the shared store and broadcasts them.
 /// </summary>
 public sealed class OrderBookWorker : BackgroundService
 {
@@ -25,11 +28,11 @@ public sealed class OrderBookWorker : BackgroundService
     /// <summary>
     /// Creates the acquisition worker
     /// </summary>
-    /// <param name="scopeFactory">Creates an acquisition scope for the exchange client and future audit services.</param>
+    /// <param name="scopeFactory">Creates an acquisition scope for the exchange client and audit writer.</param>
     /// <param name="snapshots">Stores the latest published snapshot.</param>
     /// <param name="hub">Broadcasts snapshots to connected SignalR clients.</param>
     /// <param name="options">Configures polling and retry delays.</param>
-    /// <param name="logger">Records acquisition and delivery failures.</param>
+    /// <param name="logger">Records acquisition, audit save, and delivery failures.</param>
     public OrderBookWorker(
         IServiceScopeFactory scopeFactory,
         OrderBookSnapshotStore snapshots,
@@ -46,7 +49,7 @@ public sealed class OrderBookWorker : BackgroundService
     }
 
     /// <summary>
-    /// Acquires immediately, then repeats at the configured interval with exponential error backoff.
+    /// Acquires and audits immediately, then repeats with exponential backoff after acquisition or audit failures.
     /// Shutdown cancels both in-flight work and scheduled delays.
     /// </summary>
     /// <param name="stoppingToken">Canceled when the API is shutting down.</param>
@@ -95,13 +98,28 @@ public sealed class OrderBookWorker : BackgroundService
         try
         {
             // The worker lives for the entire API's lifetime, so each acquisition gets its own scope.
-            // The future EF Core DbContext must be resolved from this scope, rather than injected
-            // into the worker, to keeping it scoped to one cycle and disposing it when this block ends.
-            using IServiceScope scope = _scopeFactory.CreateScope();
+            // The EF Core DbContext belongs to one acquisition cycle, rather than the worker's
+            // lifetime.
+            await using AsyncServiceScope scope = _scopeFactory.CreateAsyncScope();
             BitstampOrderBookClient client = scope.ServiceProvider.GetRequiredService<BitstampOrderBookClient>();
             snapshot = await client.GetOrderBookAsync(stoppingToken);
 
-            // TODO Audit logic will be added here using this acquisition scope.
+            OrderBookAuditWriter auditWriter = scope.ServiceProvider.GetRequiredService<OrderBookAuditWriter>();
+
+            try
+            {
+                // A snapshot must be saved before HTTP or SignalR can expose it.
+                await auditWriter.SaveAsync(snapshot, stoppingToken);
+            }
+            catch (Exception exception) when (
+                !stoppingToken.IsCancellationRequested &&
+                exception is DbUpdateException or SqliteException)
+            {
+                _logger.LogError(exception,
+                    "Audit save failed for snapshot {SnapshotId}. Retaining the last published snapshot.",
+                    snapshot.SnapshotId);
+                return false;
+            }
         }
         catch (Exception exception) when (
             !stoppingToken.IsCancellationRequested &&

@@ -27,9 +27,9 @@ public sealed class OrderBookSnapshotStore
 
     /// <summary>
     /// Assigns a publication sequence and atomically replaces the latest snapshot.
-    /// Once auditing is implemented, persistence must succeed before this method is called.
+    /// Audit persistence must succeed before this method is called.
     /// </summary>
-    /// <param name="snapshot">The successfully acquired and validated snapshot.</param>
+    /// <param name="snapshot">The successfully acquired, validated, and audited snapshot.</param>
     /// <returns>The published snapshot containing its sequence.</returns>
     public OrderBookResponse Publish(OrderBookResponse snapshot)
     {

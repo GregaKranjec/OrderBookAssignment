@@ -28,13 +28,13 @@ public sealed class OrderBookController : ControllerBase
     /// <remarks>
     /// This read-only endpoint never starts an exchange request or changes the acquisition schedule.
     /// The frontend receives initial snapshots and live updates through SignalR at /hubs/order-book.
-    /// HTTP caching is disabled. The last successful snapshot remains available during exchange outages;
+    /// HTTP caching is disabled. The last successful snapshot remains available during exchange or audit save failures;
     /// its acquisition time must be checked for freshness. No snapshot is available until the worker's
-    /// first successful acquisition. Audit persistence and purchase estimates are not yet implemented.
+    /// first successful acquisition and audit save. Purchase estimates are not yet implemented.
     /// </remarks>
     /// <returns>The latest snapshot, or Problem Details when no snapshot is available.</returns>
     /// <response code="200">Returns the latest snapshot, which may be stale during an exchange outage.</response>
-    /// <response code="503">No snapshot has been successfully acquired since the API started.</response>
+    /// <response code="503">No snapshot has been acquired and audited since the API started.</response>
     [HttpGet(Name = "GetOrderBook")]
     [ProducesResponseType(typeof(OrderBookResponse), StatusCodes.Status200OK, "application/json")]
     [ProducesResponseType(typeof(ProblemDetails), StatusCodes.Status503ServiceUnavailable, "application/problem+json")]
@@ -49,7 +49,7 @@ public sealed class OrderBookController : ControllerBase
         {
             return Problem(
                 title: "Order book unavailable",
-                detail: "No order book snapshot has been acquired yet. Try again shortly.",
+                detail: "No audited order book snapshot is available yet. Try again shortly.",
                 statusCode: StatusCodes.Status503ServiceUnavailable);
         }
 

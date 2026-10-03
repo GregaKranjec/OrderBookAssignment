@@ -1,12 +1,17 @@
+using Microsoft.EntityFrameworkCore;
 using OrderBook.Api.Exchanges.Bitstamp;
 using OrderBook.Api.Hubs;
 using OrderBook.Api.OrderBooks;
+using OrderBook.Api.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
+
+string auditConnectionString = AuditDatabase.GetConnectionString(builder.Configuration, builder.Environment);
+builder.Services.AddDbContext<AuditDbContext>(options => options.UseSqlite(auditConnectionString));
+builder.Services.AddScoped<OrderBookAuditWriter>();
 
 builder.Services.AddOptions<OrderBookPollingOptions>()
     .BindConfiguration("OrderBook")
@@ -28,10 +33,8 @@ builder.Services.AddHttpClient<BitstampOrderBookClient>(client =>
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+// Apply migrations before starting the worker or accepting requests
+await AuditDatabase.InitializeAsync(app);
 
 app.UseHttpsRedirection();
 app.MapControllers();
