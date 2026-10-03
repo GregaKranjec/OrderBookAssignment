@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderBook.Api", "OrderBook.Api\OrderBook.Api.csproj", "{49321FC2-50B5-4593-A7B4-36A1AE316C2C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderBook.Api", "src\OrderBook.Api\OrderBook.Api.csproj", "{49321FC2-50B5-4593-A7B4-36A1AE316C2C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
