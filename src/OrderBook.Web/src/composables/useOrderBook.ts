@@ -8,7 +8,7 @@ const RETRY_DELAY_MS = 5000
 const STALE_THRESHOLD_MS = 3000  // stale status defind at 3s for now
 
 // for UI
-type ConnectionStatus =
+export type ConnectionStatus =
     | 'connecting'
     | 'connected'
     | 'reconnecting'
@@ -116,6 +116,15 @@ export function useOrderBook() {
         scheduleRetry()
     })
 
+    const secondsSinceLastUpdate = computed(() => {
+        if (snapshot.value === null) {
+            return null
+        }
+
+        const acquiredAt = Date.parse(snapshot.value.acquiredAtUtc)
+        return Math.max(0, Math.floor((now.value - acquiredAt) / 1000))
+    })
+
     // returns stale status
     const isStale = computed(() => {
         if (snapshot.value === null) {
@@ -157,5 +166,6 @@ export function useOrderBook() {
         status,
         error,
         isStale,
+        secondsSinceLastUpdate,
     }
 }

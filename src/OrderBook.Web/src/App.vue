@@ -1,41 +1,24 @@
 <script setup lang="ts">
 import { useOrderBook } from '@/composables/useOrderBook'
-import { Badge } from '@/components/ui/badge'
-import { Card, CardContent } from '@/components/ui/card'
+import OrderBookHeader from '@/components/order-book/OrderBookHeader.vue'
+import { Card } from '@/components/ui/card'
 
-const { snapshot, status, error, isStale } = useOrderBook()
+const { status, isStale, secondsSinceLastUpdate } = useOrderBook()
 </script>
 
 <template>
-  <main class="mx-auto p-6">
-    <Card>
-      <CardContent class="space-y-4">
-        <div class="flex flex-wrap gap-2">
-          <Badge variant="outline">Connection: {{ status }}</Badge>
-          <Badge v-if="isStale" variant="destructive">Stale data</Badge>
-        </div>
-        <dl v-if="snapshot" class="grid grid-cols-2">
-          <div>
-            <dt>Snapshot sequence</dt>
-            <dd>{{ snapshot.sequence }}</dd>
-          </div>
-          <div>
-            <dt>Acquired at (UTC)</dt>
-            <dd>{{ snapshot.acquiredAtUtc }}</dd>
-          </div>
-          <div>
-            <dt>Bid levels</dt>
-            <dd>{{ snapshot.orderBook.bids.length }}</dd>
-          </div>
-          <div>
-            <dt>Ask levels</dt>
-            <dd>{{ snapshot.orderBook.asks.length }}</dd>
-          </div>
-        </dl>
+    <main class="min-h-screen bg-muted/30 px-4 py-6 sm:px-6 sm:py-8">
+        <div class="mx-auto max-w-6xl space-y-6">
+            <OrderBookHeader
+                :status="status"
+                :is-stale="isStale"
+                :seconds-since-last-update="secondsSinceLastUpdate"
+            />
 
-        <p v-else>Waiting for the first snapshot…</p>
-        <p v-if="error">{{ error }}</p>
-      </CardContent>
-    </Card>
-  </main>
+            <div class="grid items-start gap-6 md:grid-cols-[minmax(0,1fr)_280px]">
+                <Card class="min-h-80 md:min-h-112" />
+                <Card class="min-h-64 md:min-h-112" />
+            </div>
+        </div>
+    </main>
 </template>
