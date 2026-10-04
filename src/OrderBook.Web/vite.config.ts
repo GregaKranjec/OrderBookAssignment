@@ -16,6 +16,19 @@ export default defineConfig({
     host: 'localhost',
     port: 5173,
     strictPort: true,
+    proxy: {
+      '/api': {
+        target: 'https://localhost:5001',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/hubs': {
+        target: 'https://localhost:5001',
+        changeOrigin: true,
+        secure: false,
+        ws: true,
+      },
+    },
   },
   resolve: {
     alias: {
