@@ -16,7 +16,7 @@ const duration = 200 // animation length
 </script>
 
 <template>
-    <Card class="min-w-0">
+    <Card class="min-w-0 gap-3">
         <CardHeader class="flex flex-row flex-wrap items-start justify-between gap-3">
             <div class="space-y-1">
                 <CardTitle class="uppercase">{{ title }}</CardTitle>

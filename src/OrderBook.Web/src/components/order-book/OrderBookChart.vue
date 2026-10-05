@@ -62,7 +62,7 @@ function tooltip(level: ChartPriceLevel) {
             :data="chart.levels"
             :duration="duration"
             :y-domain="yDomain"
-            :padding="{ top: 12, right: 12, bottom: 0, left: 12 }"
+            :padding="{ top: 4, right: 12, bottom: 0, left: 12 }"
             :prevent-empty-domain="true"
         >
             <VisGroupedBar
@@ -78,12 +78,12 @@ function tooltip(level: ChartPriceLevel) {
                 type="x"
                 label="Price per 1 BTC (EUR)"
                 :tick-format="formatPriceTick"
-                :tick-spacing="isMobile ? 30 : 75"
+                :tick-text-align="isMobile ? 'right' : 'center'"
                 :tick-text-angle="isMobile ? -90 : 0"
-                :tick-text-align="'right'"
-                :tick-text-width="90 "
-                :tick-text-adaptive-sets="true"
-                :tick-text-hide-overlapping="!isMobile"
+                :tick-spacing="isMobile ? 30 : 75"
+                :min-max-ticks-only-when-width-is-less="0"
+                :tick-text-width="90"
+                :tick-text-adaptive-sets="!isMobile"
             />
             <VisAxis
                 type="y"
