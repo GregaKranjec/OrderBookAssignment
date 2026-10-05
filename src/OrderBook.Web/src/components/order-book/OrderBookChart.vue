@@ -25,7 +25,7 @@ const chart = computed(() => prepareOrderBookChart(props.orderBook, visibleLevel
 // chart y axis domain calc - to prevent y axis from jumping on each data update
 const yDomain = useChartYDomain(
     () => chart.value.levels.reduce((maximum, level) => Math.max(maximum, level.quantity), 0),
-    4,
+    3,
 )
 const chartConfig = orderBookChartConfig
 const tooltipContent = componentToString(chartConfig, ChartTooltipContent, {
