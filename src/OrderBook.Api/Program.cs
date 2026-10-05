@@ -36,7 +36,19 @@ var app = builder.Build();
 // Apply migrations before starting the worker or accepting requests
 await AuditDatabase.InitializeAsync(app);
 
-app.UseHttpsRedirection();
+// disable HTTPS redirection for the Docker setup
+if (app.Configuration.GetValue("HttpsRedirection:Enabled", true))
+{
+    app.UseHttpsRedirection();
+}
+
+// The Docker image includes the built frontend in wwwroot.
+if (Directory.Exists(app.Environment.WebRootPath))
+{
+    app.UseDefaultFiles();
+    app.UseStaticFiles();
+}
+
 app.MapControllers();
 app.MapHub<OrderBookHub>("/hubs/order-book");
 app.Run();

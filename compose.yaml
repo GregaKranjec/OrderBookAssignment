@@ -1,0 +1,16 @@
+services:
+  app:
+    build:
+      context: .
+      target: app
+    ports:
+      - "8080:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      HttpsRedirection__Enabled: "false"
+      ConnectionStrings__AuditDatabase: "Data Source=/data/audit.db;Default Timeout=5"
+    volumes:
+      - audit-data:/data
+
+volumes:
+  audit-data:
