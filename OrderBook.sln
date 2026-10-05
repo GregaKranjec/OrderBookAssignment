@@ -6,6 +6,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderBook.Api.UnitTests", "tests\OrderBook.Api.UnitTests\OrderBook.Api.UnitTests.csproj", "{4121854A-34A8-4E4A-B1D9-DD5E974A7EA9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OrderBook.Api.IntegrationTests", "tests\OrderBook.Api.IntegrationTests\OrderBook.Api.IntegrationTests.csproj", "{8A3874D6-7594-48D4-AFC3-8CFEA7AC2DB1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,11 +22,16 @@ Global
 		{4121854A-34A8-4E4A-B1D9-DD5E974A7EA9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4121854A-34A8-4E4A-B1D9-DD5E974A7EA9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4121854A-34A8-4E4A-B1D9-DD5E974A7EA9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A3874D6-7594-48D4-AFC3-8CFEA7AC2DB1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A3874D6-7594-48D4-AFC3-8CFEA7AC2DB1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A3874D6-7594-48D4-AFC3-8CFEA7AC2DB1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A3874D6-7594-48D4-AFC3-8CFEA7AC2DB1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{4121854A-34A8-4E4A-B1D9-DD5E974A7EA9} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
+		{8A3874D6-7594-48D4-AFC3-8CFEA7AC2DB1} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 	EndGlobalSection
 EndGlobal
