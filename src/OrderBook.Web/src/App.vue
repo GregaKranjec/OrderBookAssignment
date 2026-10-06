@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useOrderBook } from '@/composables/useOrderBook'
 import OrderBookHeader from '@/components/order-book/OrderBookHeader.vue'
-import OrderBookChart from '@/components/order-book/OrderBookChart.vue'
 import OrderBookDepthChart from '@/components/order-book/OrderBookDepthChart.vue'
 import OrderBookQuote from '@/components/order-book/OrderBookQuote.vue'
 
@@ -18,10 +17,7 @@ const { snapshot, status, isStale, secondsSinceLastUpdate } = useOrderBook()
             />
 
             <div class="grid items-start gap-6 lg:grid-cols-3">
-                <div class="grid min-w-0 gap-6 lg:col-span-2">
-                    <OrderBookChart :order-book="snapshot?.orderBook ?? null" />
-                    <OrderBookDepthChart :order-book="snapshot?.orderBook ?? null" />
-                </div>
+                <OrderBookDepthChart class="lg:col-span-2" :order-book="snapshot?.orderBook ?? null" />
                 <OrderBookQuote
                     :order-book="snapshot?.orderBook ?? null"
                     :is-outdated="isStale || status !== 'connected'"

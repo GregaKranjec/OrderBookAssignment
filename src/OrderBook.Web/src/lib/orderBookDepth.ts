@@ -1,20 +1,19 @@
 import type { BitstampOrderBook, OrderBookPriceLevel } from '@/types/orderBook'
 
-export const VISIBLE_LEVELS_PER_SIDE = 50 // number of levels to display on each side of the order book per price line depth chart
-export const DEPTH_PRICE_RANGE = 0.25// price range of 10% to hide values out of range and provide a better overview on comulative chart
+export const DEPTH_PRICE_RANGE = 0.25 // Display prices within 25% of the mid-price.
 
-export interface ChartPriceLevel {
+interface PriceLevel {
     price: number
     quantity: number
     side: 'bid' | 'ask'
 }
 
-export interface CumulativeDepthLevel extends ChartPriceLevel {
+export interface CumulativeDepthLevel extends PriceLevel {
     cumulativeQuantity: number
 }
 
 // Parses prices | quantities on each level and filters out invalid values
-function parseLevels(levels: OrderBookPriceLevel[], side: ChartPriceLevel['side']): ChartPriceLevel[] {
+function parseLevels(levels: OrderBookPriceLevel[], side: PriceLevel['side']): PriceLevel[] {
     return levels
         .map(([price, quantity]) => ({ price: Number(price), quantity: Number(quantity), side }))
         .filter(level =>
@@ -23,26 +22,8 @@ function parseLevels(levels: OrderBookPriceLevel[], side: ChartPriceLevel['side'
         )
 }
 
-// Prepares numeric values for display only
-export function prepareOrderBookChart(orderBook: BitstampOrderBook | null, levelsPerSide = VISIBLE_LEVELS_PER_SIDE) {
-    // parse levels for both and slice to show only within visible level range
-    // bids and asks should come from bitstamp already sorted - but redudantly sorting through javascript shouldn't be majorly expensive
-    const bids = parseLevels(orderBook?.bids ?? [], 'bid')
-        .sort((left, right) => right.price - left.price)
-        .slice(0, levelsPerSide)
-    const asks = parseLevels(orderBook?.asks ?? [], 'ask')
-        .sort((left, right) => left.price - right.price)
-        .slice(0, levelsPerSide)
-
-    return {
-        levels: [...bids, ...asks].sort((left, right) => left.price - right.price),
-        bestBid: bids[0]?.price ?? null,
-        bestAsk: asks[0]?.price ?? null,
-    }
-}
-
 // Convert all price level values into cumulative BTC quantities
-function accumulateLevels(levels: ChartPriceLevel[]): CumulativeDepthLevel[] {
+function accumulateLevels(levels: PriceLevel[]): CumulativeDepthLevel[] {
     let cumulativeQuantity = 0
 
     return levels.map(level => {
