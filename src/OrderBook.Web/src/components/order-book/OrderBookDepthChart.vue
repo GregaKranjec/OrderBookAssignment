@@ -44,7 +44,7 @@ function changePriceRange(range: number) {
     <Card class="order-book-depth-card min-w-0 gap-3 rounded-none sm:rounded-xl">
         <CardHeader class="flex flex-row flex-wrap items-start justify-between gap-3">
             <div class="space-y-1">
-                <CardTitle class="uppercase">Cumulative market depth</CardTitle>
+                <CardTitle class="uppercase">Cumulative depth</CardTitle>
                 <CardDescription>
                     All {{ chart.bids.length.toLocaleString() }} bid and {{ chart.asks.length.toLocaleString() }} ask levels within ±{{ priceRange * 100 }}% of the mid-price.
                 </CardDescription>
@@ -99,7 +99,7 @@ function changePriceRange(range: number) {
                     />
                     <VisAxis
                         type="y"
-                        label="Cumulative BTC"
+                        label="BTC"
                         :tick-format="formatQuantityTick"
                         :num-ticks="4"
                         :tick-line="false"
