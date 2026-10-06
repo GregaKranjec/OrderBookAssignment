@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useMediaQuery } from '@vueuse/core'
 import { VisArea, VisAxis, VisXYContainer } from '@unovis/vue'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 import { ChartContainer, ChartCrosshair, ChartLegendContent, ChartTooltip } from '@/components/ui/chart'
 import { useChartYDomain } from '@/composables/useChartYDomain'
 import type { BitstampOrderBook } from '@/types/orderBook'
-import { DEPTH_PRICE_RANGE, prepareOrderBookDepth } from '@/lib/orderBookDepth'
+import { prepareOrderBookDepth } from '@/lib/orderBookDepth'
 import type { CumulativeDepthLevel } from '@/lib/orderBookDepth'
 import {
     depthChartConfig as chartConfig,
@@ -21,15 +22,22 @@ const props = defineProps<{
 }>()
 
 const isMobile = useMediaQuery('(width < 40rem)')
-const chart = computed(() => prepareOrderBookDepth(props.orderBook))
+const priceRanges = [0.01, 0.05, 0.10, 1] // small values are most useful - keeping 100% for the sake of showing the whole data range
+const priceRange = ref(0.05)
+const chart = computed(() => prepareOrderBookDepth(props.orderBook, priceRange.value))
 const tooltip = createDepthTooltip()
 const duration = 200 // animation length
 
 // chart y axis domain calc - to prevent y axis from jumping on each data update
-const yDomain = useChartYDomain(
+const { yDomain, resetYDomain } = useChartYDomain(
     () => Math.max(chart.value.totalBidQuantity, chart.value.totalAskQuantity),
     50,
 )
+
+function changePriceRange(range: number) {
+    priceRange.value = range
+    resetYDomain()
+}
 </script>
 
 <template>
@@ -38,13 +46,14 @@ const yDomain = useChartYDomain(
             <div class="space-y-1">
                 <CardTitle class="uppercase">Cumulative market depth</CardTitle>
                 <CardDescription>
-                    All {{ chart.bids.length.toLocaleString() }} bid and {{ chart.asks.length.toLocaleString() }} ask levels within ±{{ DEPTH_PRICE_RANGE * 100 }}% of the mid-price.
+                    All {{ chart.bids.length.toLocaleString() }} bid and {{ chart.asks.length.toLocaleString() }} ask levels within ±{{ priceRange * 100 }}% of the mid-price.
                 </CardDescription>
             </div>
 
             <ChartContainer :config="chartConfig" class="block h-auto w-auto aspect-auto">
                 <ChartLegendContent class="pt-0" />
             </ChartContainer>
+
         </CardHeader>
 
         <CardContent class="min-w-0 px-3 sm:px-6">
@@ -111,6 +120,23 @@ const yDomain = useChartYDomain(
                 {{ orderBook === null ? 'Waiting for data' : 'No price levels available.' }}
             </p>
         </CardContent>
+        <CardFooter class="flex-wrap justify-end gap-2">
+            <span class="text-xs text-muted-foreground">Range around mid-price (±)</span>
+            <div class="flex gap-1" role="group" aria-label="Price range around the mid-price">
+                <Button
+                    v-for="range in priceRanges"
+                    :key="range"
+                    type="button"
+                    variant="link"
+                    size="sm"
+                    :class="priceRange === range ? 'underline underline-offset-4' : 'text-muted-foreground'"
+                    :aria-pressed="priceRange === range"
+                    @click="changePriceRange(range)"
+                >
+                    {{ range * 100 }}%
+                </Button>
+            </div>
+        </CardFooter>
     </Card>
 </template>
 

@@ -1,7 +1,5 @@
 import type { BitstampOrderBook, OrderBookPriceLevel } from '@/types/orderBook'
 
-export const DEPTH_PRICE_RANGE = 0.25 // Display prices within 25% of the mid-price.
-
 interface PriceLevel {
     price: number
     quantity: number
@@ -33,7 +31,7 @@ function accumulateLevels(levels: PriceLevel[]): CumulativeDepthLevel[] {
 }
 
 // Accumulates from the best price outwards, then shows every level within the price range.
-export function prepareOrderBookDepth(orderBook: BitstampOrderBook | null) {
+export function prepareOrderBookDepth(orderBook: BitstampOrderBook | null, priceRange: number) {
     const bidLevels = parseLevels(orderBook?.bids ?? [], 'bid')
         .sort((left, right) => right.price - left.price)
     const askLevels = parseLevels(orderBook?.asks ?? [], 'ask')
@@ -61,8 +59,8 @@ export function prepareOrderBookDepth(orderBook: BitstampOrderBook | null) {
         ? (bestBid.price + bestAsk.price) / 2
         : bestLevel.price
     const priceDomain: [number, number] = [
-        midpoint * (1 - DEPTH_PRICE_RANGE),
-        midpoint * (1 + DEPTH_PRICE_RANGE),
+        midpoint * (1 - priceRange),
+        midpoint * (1 + priceRange),
     ]
 
     // Convert all bids and asks into cumulative BTC quantities.

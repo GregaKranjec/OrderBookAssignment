@@ -1,16 +1,25 @@
 import { computed, ref, watch } from 'vue'
 
-// Grows y axis domain in fixed increments
+// Grows in fixed increments during updates, with an explicit reset for range changes.
 export function useChartYDomain(maximumQuantity: () => number, step: number) {
     const upperBound = ref(step)
 
-    watch(maximumQuantity, maximum => {
-        if (!Number.isFinite(maximum) || maximum <= upperBound.value) {
-            return
-        }
+    function calculateUpperBound(maximum: number) {
+        return Number.isFinite(maximum)
+            ? Math.max(step, Math.ceil(maximum / step) * step)
+            : step
+    }
 
-        upperBound.value = Math.ceil(maximum / step) * step
+    watch(maximumQuantity, maximum => {
+        upperBound.value = Math.max(upperBound.value, calculateUpperBound(maximum))
     }, { immediate: true })
 
-    return computed<[number, number]>(() => [0, upperBound.value])
+    function resetYDomain() {
+        upperBound.value = calculateUpperBound(maximumQuantity())
+    }
+
+    return {
+        yDomain: computed<[number, number]>(() => [0, upperBound.value]),
+        resetYDomain,
+    }
 }
