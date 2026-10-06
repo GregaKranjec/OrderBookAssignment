@@ -16,7 +16,7 @@ const { snapshot, status, isStale, secondsSinceLastUpdate } = useOrderBook()
                 :seconds-since-last-update="secondsSinceLastUpdate"
             />
 
-            <div class="grid items-start gap-6 lg:grid-cols-3">
+            <div class="-mx-4 grid items-start gap-6 sm:mx-0 lg:grid-cols-3">
                 <OrderBookDepthChart class="lg:col-span-2" :order-book="snapshot?.orderBook ?? null" />
                 <OrderBookQuote
                     :order-book="snapshot?.orderBook ?? null"

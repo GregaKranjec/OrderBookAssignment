@@ -41,7 +41,7 @@ function changePriceRange(range: number) {
 </script>
 
 <template>
-    <Card class="order-book-depth-card min-w-0 gap-3">
+    <Card class="order-book-depth-card min-w-0 gap-3 rounded-none sm:rounded-xl">
         <CardHeader class="flex flex-row flex-wrap items-start justify-between gap-3">
             <div class="space-y-1">
                 <CardTitle class="uppercase">Cumulative market depth</CardTitle>

@@ -39,7 +39,7 @@ function preventInvalidInput(event: InputEvent | ClipboardEvent) {
 </script>
 
 <template>
-    <Card>
+    <Card class="rounded-none sm:rounded-xl">
         <CardHeader>
             <CardTitle id="purchase-quote-title" class="uppercase">Purchase quote</CardTitle>
         </CardHeader>
