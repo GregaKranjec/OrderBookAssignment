@@ -78,11 +78,11 @@ function preventInvalidInput(event: InputEvent | ClipboardEvent) {
                 <dl class="space-y-2">
                     <div>
                         <dt class="text-sm text-muted-foreground">Estimated total (EUR)</dt>
-                        <dd class="break-words text-3xl font-medium tabular-nums">€{{ quote.total.toFixed(2) }}</dd>
+                        <dd class="break-words text-3xl font-medium tabular-nums">{{ quote.total.toFixed(2) }} €</dd>
                     </div>
                     <div class="text-sm">
                         <dt class="inline text-muted-foreground">Average price per BTC: </dt>
-                        <dd class="inline tabular-nums">€{{ quote.averagePrice.toFixed(2) }}</dd>
+                        <dd class="inline tabular-nums">{{ quote.averagePrice.toFixed(2) }} €</dd>
                     </div>
                 </dl>
             </div>

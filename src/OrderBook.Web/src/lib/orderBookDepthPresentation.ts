@@ -2,11 +2,11 @@ import { ChartTooltipContent, componentToString } from '@/components/ui/chart'
 import type { ChartConfig } from '@/components/ui/chart'
 import type { CumulativeDepthLevel } from '@/lib/orderBookDepth'
 
-const priceTickFormatter = new Intl.NumberFormat('en-IE', {
-    style: 'currency', currency: 'EUR', maximumFractionDigits: 0,
+const priceTickFormatter = new Intl.NumberFormat('sl-SI', {
+    maximumFractionDigits: 0,
 })
 const quantityTickFormatter = new Intl.NumberFormat('en-IE', { maximumFractionDigits: 2 })
-const priceFormatter = new Intl.NumberFormat('en-IE', { style: 'currency', currency: 'EUR' })
+const priceFormatter = new Intl.NumberFormat('sl-SI', { style: 'currency', currency: 'EUR' })
 const quantityFormatter = new Intl.NumberFormat('en-IE', { maximumFractionDigits: 8 })
 
 export const depthChartConfig = {
