@@ -1,9 +1,8 @@
 # BTC/EUR order book
 
 ASP.NET Core API and Vue/Vite frontend displaying Bitstamp's BTC/EUR order book and a purchase quote calculated from the available asks. 
-The API polls Bitstamp once per second, saves each snapshot to SQLite, and broadcasts it through SignalR. A depth chart displays the received data.
-
-Bitstamp's public order-book endpoint requires no API key. Internet access is required to acquire live data.
+The API polls Bitstamp once per second, saves each snapshot to SQLite, and broadcasts it through SignalR. A depth chart displays the received data. 
+The purchase quote is calculated from the cheapest asks first, using only the amount needed from the last price level. Bitstamp's public order-book endpoint requires no API key.
 
 Saving a full snapshot every second means the audit database can grow quite fast. For a real deployment, this would need a retention policy to delete old data after an agreed period.
 
@@ -18,6 +17,14 @@ docker compose up --build -d
 Open **http://localhost:8080**. One container serves the frontend, API and SignalR hub. No development certificate is needed.
 
 SQLite migrations run automatically on startup. The database is stored at `/data/audit.db`.
+
+To stop the app:
+
+```sh
+docker compose down
+```
+
+This keeps the audit database in the Docker volume and stops new snapshots from being acquired and stored.
 
 ## Run locally
 
