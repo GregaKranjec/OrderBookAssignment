@@ -1,9 +1,11 @@
 # BTC/EUR order book
 
 ASP.NET Core API and Vue/Vite frontend displaying Bitstamp's BTC/EUR order book and a purchase quote calculated from the available asks. 
-The API polls Bitstamp once per second, saves each snapshot to SQLite, and broadcasts it through SignalR. A depth chart displays the recieved data.
+The API polls Bitstamp once per second, saves each snapshot to SQLite, and broadcasts it through SignalR. A depth chart displays the received data.
 
 Bitstamp's public order-book endpoint requires no API key. Internet access is required to acquire live data.
+
+Saving a full snapshot every second means the audit database can grow quite fast. For a real deployment, this would need a retention policy to delete old data after an agreed period.
 
 ## Run with Docker
 

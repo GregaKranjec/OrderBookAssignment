@@ -30,7 +30,7 @@ public sealed class OrderBookController : ControllerBase
     /// The frontend receives initial snapshots and live updates through SignalR at /hubs/order-book.
     /// HTTP caching is disabled. The last successful snapshot remains available during exchange or audit save failures;
     /// its acquisition time must be checked for freshness. No snapshot is available until the worker's
-    /// first successful acquisition and audit save. Purchase estimates are not yet implemented.
+    /// first successful acquisition and audit save. Purchase estimates are calculated in the frontend from the snapshot's asks.
     /// </remarks>
     /// <returns>The latest snapshot, or Problem Details when no snapshot is available.</returns>
     /// <response code="200">Returns the latest snapshot, which may be stale during an exchange outage.</response>
